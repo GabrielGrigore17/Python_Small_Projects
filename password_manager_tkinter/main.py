@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 import random
+import json
 import pyperclip
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
@@ -37,6 +38,12 @@ def save():
     website = website_entry.get()
     email_username = email_entry.get()
     password = password_entry.get()
+    new_data = {
+        website:{
+            "email": email_username,
+            "password": password,
+        }
+    }
     if not len(website) or not len(password):
         messagebox.showerror(title="ERROR", message="Empty fields are not valid!")
         return
@@ -45,10 +52,15 @@ def save():
                                                           f"\nPassword: {password} \n Is it ok to save?")
 
     if is_ok:
-        with open("data.txt", "a") as data:
-            data.write(text)
-        website_entry.delete(0, END)
-        password_entry.delete(0, END)
+        with open("data.json", "r") as data_file:
+            # json.dump(new_data, data_file, indent=4)
+            data = json.load(data_file)
+            data.update(new_data)
+
+        with open("data.json", "w") as data_file:
+            json.dump(data, data_file, indent=4)
+            website_entry.delete(0, END)
+            password_entry.delete(0, END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -81,7 +93,6 @@ password_button = Button(text="Generate Password", command=generate_password)
 password_button.grid(column=2, row=3)
 add_button = Button(text="Add", command=save)
 add_button.grid(column=1, row=4, columnspan=2, sticky="EW")
-
 
 
 window.mainloop()
