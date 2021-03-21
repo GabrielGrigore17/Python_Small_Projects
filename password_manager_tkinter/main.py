@@ -39,7 +39,7 @@ def save():
     email_username = email_entry.get()
     password = password_entry.get()
     new_data = {
-        website:{
+        website: {
             "email": email_username,
             "password": password,
         }
@@ -47,20 +47,21 @@ def save():
     if not len(website) or not len(password):
         messagebox.showerror(title="ERROR", message="Empty fields are not valid!")
         return
-    text = f"{website} | {email_username} | {password} \n"
     is_ok = messagebox.askokcancel(title=website, message=f"These are the details: \nEmail: {email_username}"
                                                           f"\nPassword: {password} \n Is it ok to save?")
 
     if is_ok:
-        with open("data.json", "r") as data_file:
-            # json.dump(new_data, data_file, indent=4)
-            data = json.load(data_file)
-            data.update(new_data)
-
-        with open("data.json", "w") as data_file:
-            json.dump(data, data_file, indent=4)
-            website_entry.delete(0, END)
-            password_entry.delete(0, END)
+        try:
+            with open("data.json", "r") as data_file:
+                data = json.load(data_file)
+                data.update(new_data)
+            with open("data.json", "w") as data_file:
+                json.dump(data, data_file, indent=4)
+        except FileNotFoundError:
+            with open("data.json", "w") as data_file:
+                json.dump(new_data, data_file, indent=4)
+        website_entry.delete(0, END)
+        password_entry.delete(0, END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
