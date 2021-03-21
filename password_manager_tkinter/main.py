@@ -3,6 +3,22 @@ from tkinter import messagebox
 import random
 import json
 import pyperclip
+
+
+def find_password():
+    try:
+        with open("data.json", "r") as data_file:
+            data = json.load(data_file)
+            website = website_entry.get()
+            if data.get(website):
+                password = data.get(website).get("password")
+                email = data.get(website).get("email")
+                messagebox.showinfo(title=website, message=f"Email: {email} \n Password: {password}")
+            else:
+                messagebox.showerror(title="ERROR", message=f"Found no entry for {website}")
+    except FileNotFoundError:
+        messagebox.showerror(title="ERROR", message="The file is empty!")
+
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 
@@ -94,6 +110,8 @@ password_button = Button(text="Generate Password", command=generate_password)
 password_button.grid(column=2, row=3)
 add_button = Button(text="Add", command=save)
 add_button.grid(column=1, row=4, columnspan=2, sticky="EW")
+search_button = Button(text="Search", command=find_password)
+search_button.grid(column=2, row=1, sticky="EW")
 
 
 window.mainloop()
